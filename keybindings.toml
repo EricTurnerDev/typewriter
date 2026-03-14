@@ -1,0 +1,62 @@
+# Typewriter key bindings
+#
+# Each action lists zero or more key specifications.
+# An empty list [] disables the action entirely.
+#
+# Key spec format:  [modifier+[modifier+]]key
+#
+#   Modifiers (combinable with +):
+#     ctrl   shift   alt
+#
+#   Key names:
+#     Single letters:   a  b  c … z
+#     Digits:           0  1  2 … 9
+#     Function keys:    f1  f2 … f12
+#     Named keys:       enter  tab  backspace  space  escape
+#                       up  down  left  right
+#                       home  end  pageup  pagedown
+#                       plus (or =)  minus (or -)  equals
+#                       kp_plus  kp_minus  kp_enter  (numpad)
+#
+#   Examples:
+#     "ctrl+r"          "ctrl+enter"       "shift+tab"
+#     "ctrl+shift+-"    "f1"               "escape"
+#
+# To customise, copy this file to:
+#   ~/.config/typewriter/keybindings.toml
+# and edit it.  Any action you list there overrides the default.
+# Actions you omit keep their defaults from this file.
+
+[bindings]
+
+# ── Typewriter mechanics ─────────────────────────────────────────────────────
+carriage_return      = ["ctrl+r"]
+line_feed            = ["enter", "kp_enter"]
+return_and_line_feed = ["ctrl+enter", "ctrl+kp_enter"]
+back_char            = ["backspace", "left"]
+forward_char         = ["space", "right"]
+forward_tab          = ["tab"]
+back_tab             = ["shift+tab"]
+strikethrough        = ["ctrl+-", "ctrl+kp_minus"]
+
+# ── Navigation ───────────────────────────────────────────────────────────────
+line_up              = ["up"]
+line_down            = ["down"]
+prev_page            = ["pageup"]
+next_page            = ["pagedown"]
+scroll_top           = ["home"]
+
+# ── Document ─────────────────────────────────────────────────────────────────
+insert_page          = ["ctrl+n"]
+delete_page          = ["ctrl+d"]
+
+# ── Application ──────────────────────────────────────────────────────────────
+volume_up            = ["ctrl+plus"]
+volume_down          = ["ctrl+shift+-"]
+save                 = ["ctrl+s"]
+save_as              = ["ctrl+shift+s"]
+open_document        = ["ctrl+o"]
+new_document         = ["ctrl+shift+n"]
+export_pdf           = ["ctrl+e"]
+toggle_help          = ["f1"]
+quit                 = ["escape", "ctrl+q"]
