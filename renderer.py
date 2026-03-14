@@ -97,7 +97,7 @@ class Renderer:
 
         self._layout_size = (sw, sh)
 
-        avail_w = max(1, sw - _PAPER_MARGIN * 2)
+        avail_w = max(1, sw // 2)
         avail_h = max(1, sh - _PAPER_MARGIN * 2)
 
         fit_h        = avail_h / PAPER_HEIGHT
