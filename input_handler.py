@@ -31,6 +31,8 @@ class InputAction:
     # Navigation
     LINE_UP              = "line_up"
     LINE_DOWN            = "line_down"
+    HALF_LINE_UP         = "half_line_up"
+    HALF_LINE_DOWN       = "half_line_down"
     PREV_PAGE            = "prev_page"
     NEXT_PAGE            = "next_page"
     SCROLL_TOP           = "scroll_top"
@@ -64,6 +66,8 @@ _ACTION_DESCRIPTIONS: list[tuple[str, str] | None] = [
     None,
     (InputAction.LINE_UP,              "up one line"),
     (InputAction.LINE_DOWN,            "down one line"),
+    (InputAction.HALF_LINE_UP,         "up half a line"),
+    (InputAction.HALF_LINE_DOWN,       "down half a line"),
     (InputAction.PREV_PAGE,            "previous sheet"),
     (InputAction.NEXT_PAGE,            "next sheet"),
     (InputAction.SCROLL_TOP,           "go to start of first sheet"),

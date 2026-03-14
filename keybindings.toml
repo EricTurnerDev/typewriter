@@ -30,9 +30,12 @@
 [bindings]
 
 # ── Typewriter mechanics ─────────────────────────────────────────────────────
-carriage_return      = ["ctrl+r"]
+carriage_return      = ["ctrl+shift+r"]
 line_feed            = ["enter", "kp_enter"]
-return_and_line_feed = ["ctrl+enter", "ctrl+kp_enter"]
+return_and_line_feed = ["ctrl+r"]
+#carriage_return      = ["ctrl+r"]
+#line_feed            = ["enter", "kp_enter"]
+#return_and_line_feed = ["ctrl+enter", "ctrl+kp_enter"]
 back_char            = ["backspace", "left"]
 forward_char         = ["space", "shift+space", "right"]
 forward_tab          = ["tab"]
@@ -42,6 +45,8 @@ strikethrough        = ["ctrl+-", "ctrl+kp_minus"]
 # ── Navigation ───────────────────────────────────────────────────────────────
 line_up              = ["up"]
 line_down            = ["down"]
+half_line_up         = ["ctrl+up"]
+half_line_down       = ["ctrl+down"]
 prev_page            = ["pageup"]
 next_page            = ["pagedown"]
 scroll_top           = ["home"]

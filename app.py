@@ -478,6 +478,14 @@ class TypewriterApp:
                     self._switch_page(self._page_idx + 1, last_line=False)
             self._renderer.update_carriage_view(self._carriage.x, self._carriage.y, self._page_idx)
 
+        elif action == InputAction.HALF_LINE_UP:
+            self._carriage.half_line_up()
+            self._renderer.update_carriage_view(self._carriage.x, self._carriage.y, self._page_idx)
+
+        elif action == InputAction.HALF_LINE_DOWN:
+            self._carriage.half_line_down()
+            self._renderer.update_carriage_view(self._carriage.x, self._carriage.y, self._page_idx)
+
         elif action == InputAction.SCROLL_TOP:
             self._go_to_page(0)
             self._carriage.y   = self._carriage.top_margin
@@ -707,7 +715,6 @@ class TypewriterApp:
 
         total = len(self._pages)
         self._set_status(f"Page {self._page_idx + 1} of {total}")
-        self._sound.play_carriage_return()
 
     # ------------------------------------------------------------------
     # Periodic save

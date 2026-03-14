@@ -115,6 +115,30 @@ class Carriage:
         self._bell_rung_this_line = False
         return True
 
+    def half_line_up(self) -> bool:
+        """
+        Move the carriage up half a line.
+        Returns True if movement was possible (not already at top margin).
+        """
+        step = self.line_height // 2
+        if self.y - step < self.top_margin:
+            return False
+        self.y -= step
+        self._bell_rung_this_line = False
+        return True
+
+    def half_line_down(self) -> bool:
+        """
+        Move the carriage down half a line.
+        Returns True if movement was possible (not already past bottom margin).
+        """
+        step = self.line_height // 2
+        if self.y + step > self.bottom_margin:
+            return False
+        self.y += step
+        self._bell_rung_this_line = False
+        return True
+
     def line_feed(self) -> bool:
         """
         Advance the platen by one line.
