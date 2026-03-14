@@ -35,7 +35,7 @@ except ImportError:
     HAS_NUMPY = False
 
 SAMPLE_RATE = 44100
-OUT_DIR = os.path.join(os.path.dirname(__file__), "assets", "sounds")
+OUT_DIR = os.path.join(os.path.dirname(__file__), "assets", "sounds", "generated")
 
 
 # ---------------------------------------------------------------------------

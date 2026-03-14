@@ -68,9 +68,10 @@ class Renderer:
         self._carriage_y: int = MARGIN_TOP
         self._page_idx:   int = 0
 
-        # Animated horizontal position — chases _carriage_x at _CR_ANIM_SPEED.
-        self._display_x: float = float(MARGIN_LEFT)
-        self._last_time: float = time.monotonic()
+        # Animated horizontal position — chases _carriage_x at _anim_speed.
+        self._display_x:  float = float(MARGIN_LEFT)
+        self._anim_speed: float = _CR_ANIM_SPEED   # page-px/sec; set per CR
+        self._last_time:  float = time.monotonic()
 
 
         # Cached layout — rebuilt when screen size changes.
@@ -144,6 +145,20 @@ class Renderer:
     def scroll_by(self, delta: float):
         pass   # view tracks carriage; manual scroll not needed
 
+    def start_carriage_return(self, sound_duration: float):
+        """
+        Set the horizontal animation speed so _display_x reaches MARGIN_LEFT
+        exactly when the carriage-return sound ends.
+
+        Call this before update_carriage_view() so _display_x still holds the
+        pre-return position.
+        """
+        distance = self._display_x - MARGIN_LEFT
+        if sound_duration > 0 and distance > 1:
+            self._anim_speed = distance / sound_duration
+        else:
+            self._anim_speed = _CR_ANIM_SPEED
+
     def scroll_to_top(self):
         self._carriage_x = MARGIN_LEFT
         self._carriage_y = MARGIN_TOP
@@ -165,10 +180,11 @@ class Renderer:
 
         target = float(self._carriage_x)
         diff   = target - self._display_x
-        step   = _CR_ANIM_SPEED * dt
+        step   = self._anim_speed * dt
 
         if abs(diff) <= step:
-            self._display_x = target
+            self._display_x  = target
+            self._anim_speed = _CR_ANIM_SPEED   # reset to default after arrival
         elif diff > 0:
             self._display_x += step
         else:
@@ -228,7 +244,10 @@ class Renderer:
 
     def _draw_carriage_indicator(self, carriage, paper_x: int, paper_y: int):
         s  = self._scale
-        cx = paper_x + int(carriage.x * s)
+        # Use _display_x (the animated position) rather than carriage.x so the
+        # cursor stays fixed on screen while the paper slides underneath it —
+        # matching real typewriter behaviour where the typing point is stationary.
+        cx = paper_x + int(self._display_x * s)
         cy = paper_y + int(carriage.y * s)
         cw = max(1, int(carriage.char_width  * s))
         ch = max(1, int(carriage.line_height * s))

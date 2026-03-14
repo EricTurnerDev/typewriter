@@ -133,6 +133,22 @@ Documents are written atomically (to a `.tmp` file, then renamed) so a crash dur
 
 ---
 
+## Customising sounds
+
+Each sound event maps to a WAV file in `assets/sounds/`. To use your own sounds, copy `sounds.toml` to `~/.config/typewriter/sounds.toml` and edit it. Only include the events you want to change; everything else falls back to the built-in defaults.
+
+```toml
+[sounds]
+bell            = "/home/alice/samples/ding.wav"   # absolute path
+key_strike      = "my_key.wav"                     # bare filename → assets/sounds/
+carriage_return = "../sounds/cr.wav"               # relative to the config file
+space           = ""                               # empty string = silence
+```
+
+The seven configurable events are: `key_strike`, `space`, `backspace`, `carriage_return`, `line_feed`, `bell`, `carriage_move`.
+
+---
+
 ## Exporting
 
 **Ctrl+E** exports the current document. If `reportlab` is installed a PDF is written to the `exports/` folder; otherwise a PNG composite of all pages is written instead.

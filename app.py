@@ -36,7 +36,7 @@ from config import (
     WINDOW_TITLE, TARGET_FPS,
     FONT_NAMES_PRIORITY, FONT_SIZE,
     AUTO_SAVE_SECONDS, SCROLL_STEP,
-    OVERLAY_FONT_SIZE,
+    OVERLAY_FONT_SIZE, BACKGROUND_COLOR,
 )
 from page          import Page
 from carriage      import Carriage
@@ -70,6 +70,7 @@ class TypewriterApp:
         self._modal                       = None
         self._modal_purpose: str | None   = None
         self._pending_path: str | None    = None   # path queued for open after confirm
+        self._pending_carriage_view: tuple | None = None  # deferred cursor advance
 
     # ------------------------------------------------------------------
     # Initialisation
@@ -89,6 +90,13 @@ class TypewriterApp:
         self._screen = pygame.display.set_mode(size, flags)
         pygame.display.set_caption(WINDOW_TITLE)
         pygame.mouse.set_visible(False)
+
+        # Fill both buffers with the background colour immediately so there is
+        # no black or garbage frame visible while the rest of initialisation
+        # (font loading, sound init, etc.) runs.
+        for _ in range(2):
+            self._screen.fill(BACKGROUND_COLOR)
+            pygame.display.flip()
 
         # ── Font ──────────────────────────────────────────────────────
         self._font = self._load_font()
@@ -119,6 +127,11 @@ class TypewriterApp:
         self._renderer.update_carriage_view(self._carriage.x, self._carriage.y, self._page_idx)
         self._last_autosave = time.monotonic()
         self._running = True
+
+        # Prime both display buffers with a fully-drawn frame so neither
+        # buffer is ever shown blank or stale after the first flip.
+        self._render()
+        self._render()
 
     # ------------------------------------------------------------------
     # Font loading
@@ -345,6 +358,10 @@ class TypewriterApp:
     # ------------------------------------------------------------------
 
     def _handle_events(self):
+        if self._pending_carriage_view is not None:
+            self._renderer.update_carriage_view(*self._pending_carriage_view)
+            self._pending_carriage_view = None
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self._running = False
@@ -491,13 +508,18 @@ class TypewriterApp:
 
         self._page.stamp(char, self._carriage.x, self._carriage.y)
         self._sound.play_key_strike()
+
+        # Show the cursor at the stamped position for this frame, then defer
+        # the visual advance to the next frame so the character appears under
+        # the cursor before it moves.
+        self._renderer.update_carriage_view(self._carriage.x, self._carriage.y, self._page_idx)
         self._carriage.advance()
         self._document.mark_dirty()
 
         if self._carriage.should_ring_bell():
             self._sound.play_bell()
 
-        self._renderer.update_carriage_view(self._carriage.x, self._carriage.y, self._page_idx)
+        self._pending_carriage_view = (self._carriage.x, self._carriage.y, self._page_idx)
 
     def _type_strikethrough(self):
         """Stamp a centred dash for overstrike and advance."""
@@ -505,9 +527,10 @@ class TypewriterApp:
             return
         self._page.stamp("-", self._carriage.x, self._carriage.y, jitter=False)
         self._sound.play_key_strike()
+        self._renderer.update_carriage_view(self._carriage.x, self._carriage.y, self._page_idx)
         self._carriage.advance()
         self._document.mark_dirty()
-        self._renderer.update_carriage_view(self._carriage.x, self._carriage.y, self._page_idx)
+        self._pending_carriage_view = (self._carriage.x, self._carriage.y, self._page_idx)
 
     def _type_space(self):
         """Advance carriage one position without stamping a glyph."""
@@ -524,7 +547,9 @@ class TypewriterApp:
 
     def _do_carriage_return(self):
         """Snap carriage to the left margin (no line feed)."""
-        self._sound.play_carriage_return()
+        if self._carriage.col > 0:
+            self._renderer.start_carriage_return(self._sound.carriage_return_duration())
+            self._sound.play_carriage_return()
         self._carriage.carriage_return()
         self._document.mark_dirty()
         self._renderer.update_carriage_view(self._carriage.x, self._carriage.y, self._page_idx)
@@ -540,7 +565,9 @@ class TypewriterApp:
 
     def _do_return_and_line_feed(self):
         """Carriage return followed by line feed."""
-        self._sound.play_carriage_return()
+        if self._carriage.col > 0:
+            self._renderer.start_carriage_return(self._sound.carriage_return_duration())
+            self._sound.play_carriage_return()
         self._carriage.carriage_return()
         self._sound.play_line_feed()
         page_full = self._carriage.line_feed()

@@ -1,0 +1,23 @@
+# sounds.toml — Sound file configuration for the typewriter application.
+#
+# Each entry maps a sound event to a WAV file.  Supported path formats:
+#   - Bare filename         — looked up in the built-in assets/sounds/ folder
+#   - Absolute path         — used exactly as written
+#   - Relative path         — relative to this config file's directory
+#
+# To customise, copy this file to ~/.config/typewriter/sounds.toml and edit.
+# Your file is merged over these defaults; only include the sounds you want
+# to change.  Set a value to "" to silence that event.
+#
+# Example — use your own bell sound:
+#   [sounds]
+#   bell = "/home/alice/samples/ding.wav"
+
+[sounds]
+key_strike      = "key_strike.wav"
+space           = "space.wav"
+backspace       = "backspace.wav"
+carriage_return = "carriage_return.wav"
+line_feed       = "line_feed.wav"
+bell            = "bell.wav"
+carriage_move   = "carriage_move.wav"
