@@ -15,7 +15,7 @@ sessions/
 exports/
 
 # Generated sound assets (reproduced by generate_sounds.py)
-assets/sounds/*.wav
+#assets/sounds/*.wav
 
 # Pygame / SDL cache
 *.pyc
